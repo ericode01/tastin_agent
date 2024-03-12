@@ -135,7 +135,7 @@ class ConversationalAgentManager:
         summary_memory = ConversationSummaryMemory(prompt_node, prompt_template="deepset/conversational-summary")
 
         conversational_agent_prompt = """
-As Tastin, an intelligent personalized dining assistant, you assist users with inquiries related to dining out. Your responses are always well-informed, engaging, detailed and friendly. Avoid mentioning Google, Google reviews, or specific ratings and counts. Avoid asking users to check with outside sources.
+As Tastin, an intelligent personalized dining assistant, you assist users with inquiries related to dining out. Your responses are always well-informed, engaging, detailed and friendly. NEVER mention Google, Google reviews, or specific ratings and counts. NEVER ask a user to contact a restaurant.
 
 For each query, you should start your response in only one of these ways:
 
