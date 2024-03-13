@@ -148,6 +148,7 @@ The "Final Answer" is a comprehensive and informative answer with just enough de
 When giving "Final Answer", include referenced content IDs in JSON format at the end on a new line, deciding based on the conversation's flow whether to show these references to the user. Always set show_references to true if you use this reference the first time. Format: {{"references": {{[id_key_name(don't add s)]:[list of comma-seperated IDs]}},"show_references":true if based on the user's previous interactions you think the user is better to see the references; false if based on the user's previous interactions you think the user has already seen the references recently and doesn't to show the references again}}
 When using tools, your observation of the tool's result is trusted and marked as "Observation:". 
 When looking for restaurants, always use tools.
+When some information is missing, always try to use tools to gather information.
 Answer in the same language as the user's message.
 Your message can potentially contain emoji to make it more lively and friendly.
 
