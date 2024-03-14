@@ -22,6 +22,11 @@ class GeographicCoordinatesRetriever(BaseComponent):
         print(response.json())
         response_json = response.json()
 
+        if len(response_json["results"]) == 0:
+            output = {
+                "coordinates_str": "Invalid input:" + query,
+            }
+
         formatted_address = response_json["results"][0]["formatted_address"]
         latitude = response_json["results"][0]["geometry"]["location"]["lat"]
         longitude = response_json["results"][0]["geometry"]["location"]["lng"]
