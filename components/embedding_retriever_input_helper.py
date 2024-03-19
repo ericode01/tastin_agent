@@ -2,6 +2,7 @@ import json
 from json import JSONDecodeError
 
 import requests
+from haystack import Document
 from haystack.nodes.base import BaseComponent
 from requests.models import PreparedRequest
 
@@ -19,11 +20,15 @@ class EmbeddingRetrieverInputHelper(BaseComponent):
             query_json = json.loads(query)
         except JSONDecodeError:
             print("[EmbeddingRetrieverInputHelper.run] Failed to deserialize to JSON from string:" + query)
+            content = "Invalid input. Please try to modify the input JSON if possible. Failed to deserialize to JSON from string: " + query
+            doc = Document(
+                content=content
+            )
             output = {
-                "query": query,
+                "documents": [doc],
             }
 
-            return output
+            return output, "output_2"
 
         output = {}
         if "Query" in query_json:

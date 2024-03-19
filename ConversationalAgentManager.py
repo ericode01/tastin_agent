@@ -105,7 +105,7 @@ class ConversationalAgentManager:
 
         restaurant_finder_pipeline = Pipeline()
         restaurant_finder_pipeline.add_node(component=embedding_retriever_input_helper, name="EmbeddingRetrieverInputHelper", inputs=["Query"])
-        restaurant_finder_pipeline.add_node(component=retriever, name="Retriever", inputs=["EmbeddingRetrieverInputHelper"])
+        restaurant_finder_pipeline.add_node(component=retriever, name="Retriever", inputs=["EmbeddingRetrieverInputHelper.output_1"])
         restaurant_finder_pipeline.add_node(component=document_merger, name="DocumentMerger", inputs=["Retriever"])
 
         restaurant_finder_tool = Tool(name="Restaurant_Finder",
@@ -151,6 +151,7 @@ When looking for restaurants, always use tools.
 When some information is missing, always try to use tools to gather information.
 Answer in the same language as the user's message.
 Your message can potentially contain emoji to make it more lively and friendly.
+If you would give an answer covering broader scope (such as broader cuisine, broader category) than what was exactly asked by the user, give a reasonable explanation.
 
 You have access to these tools:
 {tool_names_with_descriptions}

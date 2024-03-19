@@ -24,7 +24,7 @@ class GeographicCoordinatesRetriever(BaseComponent):
 
         if len(response_json["results"]) == 0:
             output = {
-                "coordinates_str": "Invalid input:" + query,
+                "coordinates_str": "Invalid input:" + query + ". Please try to modify the input if possible.",
             }
 
             return output, "output_1"
