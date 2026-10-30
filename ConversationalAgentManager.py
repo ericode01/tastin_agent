@@ -9,6 +9,7 @@ from haystack import Pipeline
 from haystack.document_stores import PineconeDocumentStore
 from haystack.nodes import AnswerParser, EmbeddingRetriever, PromptNode, PromptTemplate
 
+from utilities import require_env
 from components.document_merger_with_business_id import DocumentMergerWithBusinessId
 from components.embedding_retriever_input_helper import EmbeddingRetrieverInputHelper
 from components.geographic_coordinates_retriever import GeographicCoordinatesRetriever
@@ -17,6 +18,11 @@ from components.geographic_coordinates_retriever import GeographicCoordinatesRet
 class ConversationalAgentManager:
     def __init__(self):
         self.session_agent_map = {}
+        self.openai_api_key = require_env("OPENAI_API_KEY")
+        self.cohere_api_key = require_env("COHERE_API_KEY")
+        self.pinecone_api_key = require_env("PINECONE_API_KEY")
+        # Fail at startup rather than on the first request
+        require_env("GOOGLE_MAPS_API_KEY")
         self.response_text_pattern = r"(?s)(.*){['\"]references['\"]:.*}"
         self.references_json_pattern = r"\{['\"]references['\"]:.*\}"
 
@@ -86,7 +92,7 @@ class ConversationalAgentManager:
     def initialize_new_conversational_agent_2(self):
 
         # restaurant_finder_tool
-        document_store = PineconeDocumentStore(api_key='eb580754-c4c7-473d-9fcb-aa1d37c94a5c',
+        document_store = PineconeDocumentStore(api_key=self.pinecone_api_key,
                                                similarity="cosine",
                                                embedding_dim=4096,
                                                environment="gcp-starter",
@@ -97,7 +103,7 @@ class ConversationalAgentManager:
 
         retriever = EmbeddingRetriever(document_store=document_store,
                                        embedding_model="embed-english-v2.0",
-                                       api_key="lfT5FlajkN9dFGO04V5hHcUkTPeNHmaA4uE1xwLw",
+                                       api_key=self.cohere_api_key,
                                        model_format="cohere",
                                        top_k=3)
 
@@ -129,7 +135,7 @@ class ConversationalAgentManager:
 
         # summary_memory
         model_name = "gpt-4"
-        prompt_node = PromptNode(model_name, api_key="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",
+        prompt_node = PromptNode(model_name, api_key=self.openai_api_key,
                                  max_length=1000)
 
         summary_memory = ConversationSummaryMemory(prompt_node, prompt_template="deepset/conversational-summary")
@@ -176,7 +182,7 @@ Thought:
         return conversational_agent
 
     def initialize_new_conversational_agent(self):
-        document_store = PineconeDocumentStore(api_key='eb580754-c4c7-473d-9fcb-aa1d37c94a5c',
+        document_store = PineconeDocumentStore(api_key=self.pinecone_api_key,
                                                similarity="cosine",
                                                embedding_dim=4096,
                                                environment="gcp-starter",
@@ -185,7 +191,7 @@ Thought:
 
         retriever = EmbeddingRetriever(document_store=document_store,
                                        embedding_model="embed-english-v2.0",
-                                       api_key="lfT5FlajkN9dFGO04V5hHcUkTPeNHmaA4uE1xwLw",
+                                       api_key=self.cohere_api_key,
                                        model_format="cohere",
                                        top_k=3)
 
@@ -202,7 +208,7 @@ Thought:
                                            )
 
         model_name = "gpt-4"
-        prompt_node = PromptNode(model_name, api_key="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",
+        prompt_node = PromptNode(model_name, api_key=self.openai_api_key,
                                  max_length=1000)
 
         summary_memory = ConversationSummaryMemory(prompt_node, prompt_template="deepset/conversational-summary")
@@ -273,7 +279,7 @@ Thought:
         return conversational_agent
 
     # def initialize_new_conversational_agent(self):
-    #     document_store = PineconeDocumentStore(api_key='eb580754-c4c7-473d-9fcb-aa1d37c94a5c',
+    #     document_store = PineconeDocumentStore(api_key=self.pinecone_api_key,
     #                                            similarity="cosine",
     #                                            embedding_dim=4096,
     #                                            environment="gcp-starter",
@@ -282,7 +288,7 @@ Thought:
     #
     #     retriever = EmbeddingRetriever(document_store=document_store,
     #                                    embedding_model="embed-english-v2.0",
-    #                                    api_key="lfT5FlajkN9dFGO04V5hHcUkTPeNHmaA4uE1xwLw",
+    #                                    api_key=self.cohere_api_key,
     #                                    model_format="cohere")
     #
     #     prompt = """You are an intelligent advisor called Weat helping a user with questions about restaurant, dining out, cooking at home
@@ -299,7 +305,7 @@ Thought:
     #                                      output_parser=AnswerParser())
     #
     #     prompt_node1 = PromptNode(model_name_or_path="gpt-4",
-    #                               api_key="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",
+    #                               api_key=self.openai_api_key,
     #                               default_prompt_template=prompt_template,
     #                               max_length=500)
     #
@@ -308,7 +314,7 @@ Thought:
     #     query_pipeline.add_node(component=prompt_node1, name="PromptNode", inputs=["Retriever"])
     #
     #     model_name = "gpt-4"
-    #     prompt_node = PromptNode(model_name, api_key="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",
+    #     prompt_node = PromptNode(model_name, api_key=self.openai_api_key,
     #                              max_length=256)
     #
     #     summary_memory = ConversationSummaryMemory(prompt_node)

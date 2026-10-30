@@ -2,10 +2,16 @@ import requests
 from haystack.nodes.base import BaseComponent
 from requests.models import PreparedRequest
 
+from utilities import require_env
+
 
 class GeographicCoordinatesRetriever(BaseComponent):
     # If it's not a decision component, there is only one outgoing edge
     outgoing_edges = 1
+
+    def __init__(self):
+        super().__init__()
+        self.api_key = require_env("GOOGLE_MAPS_API_KEY")
 
     def run(self, query: str, **kwargs):
         # Insert code here to manipulate the input and produce an output dictionary
@@ -13,7 +19,7 @@ class GeographicCoordinatesRetriever(BaseComponent):
         print("Enter GeographicCoordinatesRetriever.run")
 
         url = 'https://maps.googleapis.com/maps/api/geocode/json'
-        params = {'address': query, 'key': 'AIzaSyDdsT4WNL9aWk4fRC3NYC86bgFB9ZlW3u0'}
+        params = {'address': query, 'key': self.api_key}
         req = PreparedRequest()
         req.prepare_url(url, params)
         print(req.url)
